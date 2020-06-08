@@ -13,21 +13,21 @@ an ESP8266 module (e.g. NodeMCU) reads the home network public IP address using 
 the module echoes back the public IP address to the cloud, publishing a "dweet" using the dweet.io APIs.
 a web application running on freeboard.io reads the dweet, and presents the public IP address nicely using any web browser.
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
-Pagina a visualizar la ip:    http://dweet.io/get/latest/dweet/for/lincoyan
+Pagina a visualizar la ip:    http://dweet.io/get/latest/dweet/for/salas525
 
- CODIGO PARA EL ESP8266:
+ CODIGO PARA EL ESP8266 (esp01):
  */
 
  #include "ESP8266WiFi.h"
-// #include <WiFi.h>
+
 
 // WiFi parameters
 char ssid [] = "movistar_CC4B58";
 char key[] = "casabicho";       // your network key
 int keyIndex = 0;              // your network key Index numbe
-int status = WL_IDLE_STATUS;   // the Wifi radio's status
+//int status = WL_IDLE_STATUS;   // the Wifi radio's status
 String dweetThingName("salas525");
-long x = 0;
+long x = 0;  //timeout timer for reset
 
 void setup() {
   
@@ -49,7 +49,7 @@ Serial.print("Conectando a la red wifi, SSID: ");
     delay(500);
     
     Serial.print(".");
-        if((millis() - x) > 5000){
+        if((millis() - x) > 5000){ //si la espera es mayor a 5 segundos resetear el esp01
           Serial.print("RESETEANDO POR FALLA CONEXION WIFI");
       ESP.restart();
     }
@@ -75,7 +75,7 @@ String getIp()
   } else {
       Serial.println("Connection to ipify.org failed");
       delay(500);
-      ESP.restart();
+      ESP.restart();     // resetea por software si se pierde la conexion
       return String();
   }
   delay(5000);
@@ -96,7 +96,7 @@ bool dweet( String ip)
   if (!client.connect("dweet.io", 80)) 
   {
     Serial.println("dweet failed, RESETEANDO...");
-    ESP.restart();
+    ESP.restart();             // resetea por software si se pierde la conexion
     return false;
   }  
   else 
